@@ -1,0 +1,73 @@
+-------------------------------------------------
+i2py:  Convert IDL programs and scripts to Python
+
+Author: Chris Stawarz <chris@pseudogreen.org>
+Version 0.1.0
+May 30, 2005
+-------------------------------------------------
+
+------------
+INTRODUCTION
+------------
+i2py provides tools for converting programs and scripts written in Research
+System Inc.'s IDL programming language to Python.  It is not an IDL-compatible
+front end for the Python interpreter, nor does it make any attempt to replicate
+the functionality of the IDL standard library.  Rather, its only purpose is to
+perform source-to-source conversion of legacy IDL code to Python.  Currently,
+it supports only procedural IDL, although support for object-oriented code may
+be added in the future.
+
+i2py is free software, distributed under the terms of the GNU General Public
+License.  See the file COPYING for details.
+
+------
+STATUS
+------
+This is an alpha release of i2py.  Although the code is functional, not all IDL
+language constructs can be converted yet, and the entire package needs
+extensive testing and debugging before it will be ready for production use.
+
+That said, if you're willing to try it out, any feedback (comments, bug
+reports, patches) will be greatly appreciated.  Please e-mail it to
+Chris Stawarz <chris@pseudogreen.org>.
+
+------------
+REQUIREMENTS
+------------
+i2py requires Python 2.3 or later.  The package is written in pure Python, so
+it should run on any system with an appropriate version of the Python
+interpreter installed.
+
+i2py uses the excellent PLY package (http://www.dabeaz.com/ply/) to handle
+lexing and parsing.  The needed modules are distributed with i2py, so there is
+no need to install PLY separately.
+
+The scripts produced by i2py require one of the array packages available for
+Python.  Currently, the options are Numeric and numarray (numarray being the
+default), but scipy_core may soon be the preferred alternative.  For a
+discussion of the various packages available, see http://numeric.scipy.org/.
+
+-------------------------
+INSTALLATION INSTRUCTIONS
+-------------------------
+To install the package, all you should need to do is
+
+  python setup.py install
+
+See "Installing Python Modules" (http://docs.python.org/inst/inst.html) for
+more information on using setup.py scripts.
+
+--------------------
+FOR MORE INFORMATION
+--------------------
+Web site:
+  http://software.pseudogreen.org/i2py/
+
+IDL to Numeric/numarray Mapping:
+  http://www.johnny-lin.com/cdat_tips/tips_array/idl2num.html
+
+Related software:
+  Numerical Python:	http://numeric.scipy.org/
+  PLY:			http://www.dabeaz.com/ply/
+  Python:		http://python.org/
+

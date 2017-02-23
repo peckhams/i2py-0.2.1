@@ -1,0 +1,10 @@
+2005-05-30  Chris Stawarz  <chris@pseudogreen.org>
+
+	* Initial alpha release
+
+2008-09-03  Scott Peckham <Scott.Peckham@colorado.edu>
+
+Added support for about 70 more functions and procedures,
+using routines from the NumPy package.
+Most changes were to maplib.py, but also made some changes
+to ir.py, map.py and config.py.

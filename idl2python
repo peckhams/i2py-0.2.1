@@ -1,0 +1,164 @@
+#!/usr/bin/env python
+
+# 
+#  Copyright (C) 2005 Christopher J. Stawarz <chris@pseudogreen.org>
+# 
+#  This file is part of i2py.
+# 
+#  i2py is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+# 
+#  i2py is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+# 
+#  You should have received a copy of the GNU General Public License
+#  along with i2py; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+
+import sys
+import os.path
+from optparse import OptionParser
+import i2py
+
+
+################################################################################
+#
+# Process command-line options and arguments
+#
+################################################################################
+
+
+# Create the OptionParser
+oparser = OptionParser(usage=('%prog [-d] [-s] [-r RCFILE] [-o OUTFILE] ' +
+                              'INFILE ...'),
+                       version=('%%prog %s' % i2py.__version__))
+oparser.add_option('-d', '--dump', action='store_true',
+                  help='dump parse tree to stdout as IDL code')
+oparser.add_option('-o', '--outfile', help='write all output to OUTFILE')
+oparser.add_option('-r', '--rcfile',
+                  help='get configuration from RCFILE instead of i2pyrc')
+oparser.add_option('-s', '--stdout', action='store_true',
+                   help='write output to stdout')
+
+# Parse the command line
+opts, args = oparser.parse_args()
+
+# Load the configuration file
+i2py.load_rcfile(opts.rcfile)
+
+# If no arguments or the single argument '-' were given, the input comes from
+# stdin
+if (len(args) == 0) or ((len(args) == 1) and (args[0] == '-')):
+   args = [sys.stdin]
+
+
+################################################################################
+#
+# Define some work functions
+#
+################################################################################
+
+
+#
+# Parses the contents of open file object infile and generates the output code.
+# If no errors occur, returns the output string.  Otherwise, prints the errors
+# to stderr (with infile.name prepended to each message) and returns None.
+#
+
+def process_input(infile):
+   output = i2py.parse(infile.read())
+
+   if output:
+      if opts.dump:
+         output = str(output)
+      else:
+         output = output.pycode()
+
+   if (not output) or i2py.error_occurred():
+      for err in i2py.get_error_list():
+         sys.stderr.write('%s:%s\n' % (infile.name, err))
+      return None
+
+   return output
+
+
+#
+# Returns infilename with the extension changed to '.py'.  Assumes infilename
+# has a non-empty basename (i.e. it's a file name, not a directory name).
+#
+
+def make_outfile_name(infilename):
+   dirname, basename = os.path.split(infilename)
+   dot_index = basename.rfind('.')
+   if dot_index > 0:
+      basename = basename[0:dot_index]
+   return os.path.join(dirname, basename + '.py')
+
+
+################################################################################
+#
+# Do the actual work
+#
+################################################################################
+
+
+exit_stat = 0    # Exit status
+outfile = None   # Output file object
+
+try:
+   for infilename in args:
+      #
+      # Process the input file
+      #
+
+      if infilename is sys.stdin:
+	 # Read from stdin
+         output = process_input(sys.stdin)
+      else:
+	 # Read from a file
+         infile = file(infilename, 'U')   # Open in universal newline mode
+         try:
+            output = process_input(infile)
+         finally:
+            infile.close()
+
+      #
+      # Write the output file
+      #
+
+      # If an error occurred, don't write any output
+      if not output:
+         exit_stat = 1
+         continue
+
+      if opts.outfile:
+	 # --outfile was given, so all output goes to the specified file
+         if not outfile:
+            outfile = file(opts.outfile, 'w')
+         outfile.write(output)
+      elif opts.dump or opts.stdout or (infilename is sys.stdin):
+	 # --dump or --stdout was given or the input came from stdin, so
+	 # the output goes to stdout
+         sys.stdout.write(output)
+      else:
+	 # Output goes to a file
+         outfile = file(make_outfile_name(infilename), 'w')
+         try:
+            outfile.write(output)
+         finally:
+            outfile.close()
+finally:
+   # If --outfile was given, close the output file
+   if opts.outfile and outfile:
+      outfile.close()
+
+# Done!
+sys.exit(exit_stat)
+
+

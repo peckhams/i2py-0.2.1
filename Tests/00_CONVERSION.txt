@@ -1,0 +1,192 @@
+
+August 12, 2008
+S.D. Peckham
+
+--------------------------------------
+IDL Functions That Are Same in Numpy
+--------------------------------------
+ceil
+cos
+cosh
+exp
+floor
+sin
+sinh
+sqrt
+tan
+tanh
+
+----------------------------------
+IDL Functions Not Mapped by i2py
+----------------------------------
+abs -> absolute  (numpy)
+acos -> arccos (numpy)
+alog -> log   (numpy)
+alog10 -> log10  (numpy)
+asin -> arcsin (numpy)
+assoc
+atan(x) -> arctan(x)
+atan(y,x) -> arctan2(x,y)   (NB!  args reversed)
+byte
+congrid
+convolve
+curvefit
+dblarr (bytarr, intarr, lonarr, etc., except fltarr)
+dialog_pickfile
+dindgen (bindgen, indgen, lindgen, findgen, sindgen, etc.)
+eof
+fft
+file_copy
+file_delete
+file_info
+file_lines
+file_search
+file_test
+finite
+fstat   (e.g. temp=fstat(unit), filesize=temp.size)
+histogram  (use searchsorted in numpy?  See p. 40)
+invert
+max
+n_elements  (redo for numpy ?)
+path_sep
+randomn
+randomu
+rebin
+reform -> reshape
+regress
+reverse
+rotate
+round
+shift
+size   (e.g. dim = size(var, /dimensions) )
+smooth
+sort -> argsort (numpy)
+string  (and its format keyword)
+strlen
+strlowcase
+strmid
+strpos
+strsplit
+strtrim
+strupcase
+systime
+total -> sum, cumsum  (in numpy)
+trigrid
+uniq
+where (redo as idl_where ??)
+
+-----------------------------------
+IDL Procedures Not Mapped by i2py
+-----------------------------------
+break  (statement vs. procedure)
+cd
+close, /all
+forward_function (statement vs. procedure)
+free_lun
+get_lun
+help
+make_array
+on_error
+on_ioerror
+openr
+openu
+openw
+printf
+readu
+restore
+save
+triangulate
+wait -> time.sleep
+wdelete
+window
+writeu
+wset
+
+----------------------------------------
+Python Reserved Words as IDL Variables
+----------------------------------------
+in
+pow  ??  (power in numpy)
+
+-----------------------
+IDL System Variables
+-----------------------
+!dtor
+!error_state
+!order
+!version
+
+---------------------
+IDL Widget Routines
+---------------------
+widget_base
+widget_button
+widget_control
+widget_draw
+widget_droplist
+widget_event
+widget_info
+widget_label
+widget_list
+widget_slider
+widget_table
+widget_text
+xmanager
+
+------------------------
+Text Formatting Issues
+------------------------
+e.g. format ='(F15.7)' in STRING function
+
+-------------------
+Potential Issues
+-------------------
+[-1] -> concatenate([-1])  ???
+
+(size(iv.q))[0]    (in route.py)
+
+done = 1  (vs. done = True)
+_sys_d.name  (in utils_TF.py)
+Not_Same_Byte_Order function  (in utils_TF.pro)
+------------------------------
+s = size(grid, dimensions=True)
+nx = s[0]
+ny = s[1]
+------------------------------
+info = fstat(unit)
+if (info.open == 0):
+------------------------------
+
+
+------------------------
+Things that are OK
+------------------------
+from numpy import *
+class test():
+    def __init__(self):
+        self.a = array((1,2,3,4))
+print (x.a)[1]
+2
+----------------------------------------
+a = array((1,2,3,4,5,6))
+w = array((2,2,0,0,1,1))
+print a[w]
+[3 3 1 1 2 2]
+----------------------------------------
+common block vars like LW (log window)
+are handled using "global lw"
+----------------------------------------
+using "bunch" for structures
+----------------------------------------
+elimination of pointers
+----------------------------------------
+keyword inheritance:
+    meters = (meters is not None)  -> (True or False)
+    then used to set a keyword 
+----------------------------------------
+
+
+
+
+
+
